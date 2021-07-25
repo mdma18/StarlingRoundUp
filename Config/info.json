@@ -1,0 +1,21 @@
+{
+  "accounts":
+  [
+    {
+      "accountUid":"cce194f9-ba5c-4fed-81c4-68784cbe47e7",
+      "accountType":"PRIMARY",
+      "defaultCategory":"81e4be80-3931-49d3-963e-7322d31296ec",
+      "currency":"GBP",
+      "createdAt":"2021-06-30T01:21:49.923Z",
+      "name":"Personal"
+    },
+    {
+      "accountUid":"64d3cc21-4617-42e4-b855-d2babc06f419",
+      "accountType":"ADDITIONAL",
+      "defaultCategory":"3478a339-0d61-4c8a-954b-8d2479984011",
+      "currency":"EUR",
+      "createdAt":"2021-07-05T00:57:29.525Z",
+      "name":"Euro"
+    }
+  ]
+}

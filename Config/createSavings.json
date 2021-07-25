@@ -1,0 +1,9 @@
+{
+  "name": "Trip to Paris",
+  "currency": "GBP",
+  "target": {
+    "currency": "GBP",
+    "minorUnits": 15000
+  },
+  "base64EncodedPhoto": "string"
+}
