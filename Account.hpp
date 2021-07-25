@@ -29,11 +29,6 @@ class Account {
  private:
   /* Private Methods */
   void Controller();
-  // void ReqBalance();
-  // void ReqFeedItems();
-  // void RoundUp();
-  // void CheckSavings();
-  // void AddToSavings();
   std::string GenerateUUID();
   std::string SetURL(AccInfo zInfo);
   void SetParams(AccInfo* zInfo, json jData);
@@ -46,11 +41,9 @@ class Account {
   /* Attributes */
   std::string m_sAccUUID;
   std::string m_sCategory;
-  // std::string m_sURL;  // Remove
   std::string m_sSavingsUUID;
   float m_fBalance;
   Customer* m_pCustomer;
-  // json m_jResponse;  // Remove
   float m_fSum;
 };
 
