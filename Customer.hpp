@@ -48,7 +48,8 @@ class Customer {
   Customer& operator=(const Customer& other);
 
   /* Attributes */
-  CURL* mCURL;
+  // std::vector<CURL*> m_vHandles;
+  CURL* m_Handle;
   struct curl_slist* mHeaders;
   std::string mData;
   std::string mAuth;

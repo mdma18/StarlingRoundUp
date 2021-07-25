@@ -17,6 +17,7 @@
 
 /* Standard Libraries */
 #include <stdio.h>
+#include <stdlib.h>
 
 /* cURL Lib */
 #include <curl/curl.h>
@@ -39,10 +40,12 @@ using nlohmann::json;
 constexpr auto BASEURL = "https://api-sandbox.starlingbank.com/api/v2/";
 constexpr auto TYPE = "Accept: application/json";
 constexpr auto C_TYPE = "Content-Type: application/json";
+constexpr auto CONT = "Expect:";
+constexpr auto ENC = "Transfer-Encoding: chunked";
 constexpr auto OK = 200;
 constexpr auto N_ACCOUNTS = 2;
-constexpr auto MAX_TR_TIME = "2021-07-19T13%3A15%3A07.000Z";
-constexpr auto MIN_TR_TIME = "2021-07-12T13%3A15%3A07.000Z";
+constexpr auto MAX_TR_TIME = "2021-07-25T21%3A51%3A00.000Z";
+constexpr auto MIN_TR_TIME = "2021-07-18T13%3A05%3A00.000Z";
 
 // const CURLoption zOpts[] = {
 //     CURLOPT_VERBOSE,

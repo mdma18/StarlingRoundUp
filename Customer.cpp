@@ -4,10 +4,12 @@
 
 //=========================================================================================
 Customer::Customer(std::string sAuth)
-    : mCURL(curl_easy_init()),
+    : m_Handle(curl_easy_init()),
       mHeaders(NULL),
       mAuth(sAuth) {
   Configure();
+  // Start program
+  Initialise();
 }
 //=========================================================================================
 
@@ -16,7 +18,8 @@ Customer::~Customer() {
   // Clear headers
   curl_slist_free_all(mHeaders);
   // Cleanup CURL
-  curl_easy_cleanup(mCURL);
+  // curl_easy_cleanup(m_GETHandle);
+  // curl_easy_cleanup(m_PUTHandle);
 }
 //=========================================================================================
 
@@ -43,15 +46,16 @@ json Customer::CurlRequest(std::string sURL, ReqType zType, json jData) {
 
   switch (zType) {
     case PUT:
-      curl_easy_setopt(mCURL, CURLOPT_CUSTOMREQUEST, "PUT");             /* !!! */
-      curl_easy_setopt(mCURL, CURLOPT_POSTFIELDS, jData.dump().c_str()); /* data goes here */
+      curl_easy_setopt(m_Handle, CURLOPT_CUSTOMREQUEST, "PUT");             /* !!! */
+      curl_easy_setopt(m_Handle, CURLOPT_POSTFIELDS, jData.dump().c_str()); /* data goes here */
     case GET:
-      curl_easy_setopt(mCURL, CURLOPT_URL, sURL.c_str());
+      curl_easy_setopt(m_Handle, CURLOPT_URL, sURL.c_str());
       // Run our HTTP GET command, capture the HTTP response code.
-      curl_easy_perform(mCURL);
-      curl_easy_getinfo(mCURL, CURLINFO_RESPONSE_CODE, &nResCode);
+      curl_easy_perform(m_Handle);
+      curl_easy_getinfo(m_Handle, CURLINFO_RESPONSE_CODE, &nResCode);
       break;
   }
+
   // For printing RAW response data
   std::cout << "\n--- This is a " << sTemp << " request ---\n"
             << std::endl;
@@ -64,6 +68,7 @@ json Customer::CurlRequest(std::string sURL, ReqType zType, json jData) {
     mData.clear();
   } else {
     std::cout << sTemp << " Request failed with response code: " << nResCode << std::endl;
+    exit(EXIT_FAILURE);
   }
   return jData;
 }
@@ -77,38 +82,38 @@ void Customer::Configure() {
   mHeaders = curl_slist_append(mHeaders, TYPE);
   mHeaders = curl_slist_append(mHeaders, mAuth.c_str());
   mHeaders = curl_slist_append(mHeaders, C_TYPE);
+  // mHeaders = curl_slist_append(mHeaders, CONT);
+  // mHeaders = curl_slist_append(mHeaders, ENC);
 
   // Verbose to debug
-  curl_easy_setopt(mCURL, CURLOPT_VERBOSE, 0);
+  curl_easy_setopt(m_Handle, CURLOPT_VERBOSE, 0L);
 
   /* Set the default value: strict certificate check please */
-  curl_easy_setopt(mCURL, CURLOPT_SSL_VERIFYPEER, 0);
+  curl_easy_setopt(m_Handle, CURLOPT_SSL_VERIFYPEER, 0);
   // Validate SSL connection
   // curl_easy_setopt(curl, CURLOPT_CAINFO, "starling-sandbox-api-certificate.crt");
 
   // Don't bother trying IPv6, which would increase DNS resolution time.
-  curl_easy_setopt(mCURL, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+  curl_easy_setopt(m_Handle, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
   // Don't wait forever, time out after 10 seconds.
-  curl_easy_setopt(mCURL, CURLOPT_TIMEOUT, 10);
+  curl_easy_setopt(m_Handle, CURLOPT_TIMEOUT, 10);
 
   // Follow HTTP redirects if necessary.
-  curl_easy_setopt(mCURL, CURLOPT_FOLLOWLOCATION, 1L);
+  curl_easy_setopt(m_Handle, CURLOPT_FOLLOWLOCATION, 1L);
 
   // API protection, providing a user-agent for identification.
-  curl_easy_setopt(mCURL, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+  curl_easy_setopt(m_Handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
 
   // Hook up data handling function.
-  curl_easy_setopt(mCURL, CURLOPT_WRITEFUNCTION, Customer::WriteCallback);
+  curl_easy_setopt(m_Handle, CURLOPT_WRITEFUNCTION, Customer::WriteCallback);
 
   // Hook up data container (will be passed as the last parameter to the
   // callback handling function).
-  curl_easy_setopt(mCURL, CURLOPT_WRITEDATA, &mData);
+  curl_easy_setopt(m_Handle, CURLOPT_WRITEDATA, &mData);
 
   // Set Request body headers.
-  curl_easy_setopt(mCURL, CURLOPT_HTTPHEADER, mHeaders);
-  // Start program
-  Initialise();
+  curl_easy_setopt(m_Handle, CURLOPT_HTTPHEADER, mHeaders);
 }
 //=========================================================================================
 
