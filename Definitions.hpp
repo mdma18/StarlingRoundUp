@@ -23,7 +23,6 @@
 #include <math.h>
 #include <rpc.h>
 
-#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -41,21 +40,20 @@ constexpr auto BASEURL = "https://api-sandbox.starlingbank.com/api/v2/";
 constexpr auto TYPE = "Accept: application/json";
 constexpr auto C_TYPE = "Content-Type: application/json";
 constexpr auto OK = 200;
-constexpr auto N_ACCOUNTS = 2;
-constexpr auto N_URLS = 10;
+constexpr auto N_ACCOUNTS = 1;
 constexpr auto MAX_TR_TIME = "2021-07-19T13%3A15%3A07.000Z";
 constexpr auto MIN_TR_TIME = "2021-07-12T13%3A15%3A07.000Z";
 
-const CURLoption zOpts[] = {
-    CURLOPT_VERBOSE,
-    CURLOPT_SSL_VERIFYPEER,
-    CURLOPT_IPRESOLVE,
-    CURLOPT_TIMEOUT,
-    CURLOPT_FOLLOWLOCATION,
-    CURLOPT_USERAGENT,
-    CURLOPT_WRITEFUNCTION,
-    CURLOPT_WRITEDATA,
-    CURLOPT_HTTPHEADER};
+// const CURLoption zOpts[] = {
+//     CURLOPT_VERBOSE,
+//     CURLOPT_SSL_VERIFYPEER,
+//     CURLOPT_IPRESOLVE,
+//     CURLOPT_TIMEOUT,
+//     CURLOPT_FOLLOWLOCATION,
+//     CURLOPT_USERAGENT,
+//     CURLOPT_WRITEFUNCTION,
+//     CURLOPT_WRITEDATA,
+//     CURLOPT_HTTPHEADER};
 
 typedef enum {
   AccBalance = 0,

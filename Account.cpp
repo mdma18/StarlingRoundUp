@@ -63,9 +63,9 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
                  static_cast<float>(100);
           m_fSum += (std::ceil(nVal) - nVal);
           // std::cout << fValue << std::endl;
-          // Enough funds?
-          *zInfo = (m_fSum > 0 && m_fBalance > m_fSum) ? SavingsUUID : Esc;
         }
+        // Enough funds?
+        *zInfo = (m_fSum > 0 && m_fBalance > m_fSum) ? SavingsUUID : Esc;
       }
       break;
     case SavingsUUID:
