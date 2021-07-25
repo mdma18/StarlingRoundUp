@@ -7,6 +7,7 @@ Customer::Customer(std::string sAuth)
     : mCURL(curl_easy_init()),
       mHeaders(NULL),
       mAuth(sAuth) {
+  Configure();
 }
 //=========================================================================================
 
@@ -21,34 +22,40 @@ Customer::~Customer() {
 
 //=========================================================================================
 void Customer::Initialise() {
+  // Initial (seed) URL to fetch accounts.
   std::string sURL(BASEURL + std::string("accounts"));
-
   // Get Accounts of Customer
-  jResponse = GetRequest(sURL);
+  json jData(GetRequest(sURL));
 
+  // Initialise Account objects with their respective UUIDs.
   for (int i(0); i < N_ACCOUNTS; i++) {
     mAccounts.push_back(new Account(this,
-                                    jResponse["accounts"][i]["accountUid"],
-                                    jResponse["accounts"][i]["defaultCategory"]));
+                                    jData["accounts"][i]["accountUid"],
+                                    jData["accounts"][i]["defaultCategory"]));
   }
 }
 //=========================================================================================
 
 //=========================================================================================
-/* This function take */
-//=========================================================================================
-json Customer::GetRequest(std::string sURL) {
+json Customer::CurlRequest(std::string sURL, ReqType zType, json jData) {
   int nResCode(0);
-  json jData;
+  std::string sTemp(zType ? "PUT" : "GET");
 
-  // Retrieve accounts
-  curl_easy_setopt(mCURL, CURLOPT_URL, sURL.c_str());
-  // Run our HTTP GET command, capture the HTTP response code.
-  curl_easy_perform(mCURL);
-  curl_easy_getinfo(mCURL, CURLINFO_RESPONSE_CODE, &nResCode);
-
+  switch (zType) {
+    case PUT:
+      curl_easy_setopt(mCURL, CURLOPT_CUSTOMREQUEST, "PUT");             /* !!! */
+      curl_easy_setopt(mCURL, CURLOPT_POSTFIELDS, jData.dump().c_str()); /* data goes here */
+    case GET:
+      curl_easy_setopt(mCURL, CURLOPT_URL, sURL.c_str());
+      // Run our HTTP GET command, capture the HTTP response code.
+      curl_easy_perform(mCURL);
+      curl_easy_getinfo(mCURL, CURLINFO_RESPONSE_CODE, &nResCode);
+      break;
+  }
   // For printing RAW response data
-  printf("\n -----GET REQUEST----- \n\n%s\n\n", mData.c_str());
+  std::cout << "\n---This is a " << sTemp << " request---\n"
+            << std::endl;
+  printf("\n\n%s\n\n", mData.c_str());
 
   if (nResCode == OK) {
     // Parse JSON Object.
@@ -56,43 +63,9 @@ json Customer::GetRequest(std::string sURL) {
     // Clear buffer
     mData.clear();
   } else {
-    std::cout << "\nGET request failed with response code: " << nResCode << std::endl;
+    std::cout << sTemp << " Request failed with response code: " << nResCode << std::endl;
   }
   return jData;
-}
-//=========================================================================================
-
-//=========================================================================================
-/* This function take */
-//=========================================================================================
-json Customer::PutRequest(std::string sURL, json jData) {
-  int nResCode(0);
-  json jRes;
-
-  // Retrieve accounts
-  curl_easy_setopt(mCURL, CURLOPT_URL, sURL.c_str());
-
-  // Run our HTTP PUT command, capture the HTTP response code.
-  // Enable PUT over HTTP
-  // curl_easy_setopt(mCURL, CURLOPT_UPLOAD, 1L);
-  curl_easy_setopt(mCURL, CURLOPT_CUSTOMREQUEST, "PUT");             /* !!! */
-  curl_easy_setopt(mCURL, CURLOPT_POSTFIELDS, jData.dump().c_str()); /* data goes here */
-
-  curl_easy_perform(mCURL);
-  curl_easy_getinfo(mCURL, CURLINFO_RESPONSE_CODE, &nResCode);
-  curl_easy_setopt(mCURL, CURLOPT_CUSTOMREQUEST, NULL);
-  // For printing RAW response data
-  printf("\n -----PUT REQUEST----- \n\n%s\n\n", mData.c_str());
-
-  if (nResCode == OK) {
-    // Parse JSON Object.
-    jRes = json::parse(mData);
-    // Clear buffer
-    mData.clear();
-  } else {
-    std::cout << "\nPUT request failed with response code: " << nResCode << std::endl;
-  }
-  return jRes;
 }
 //=========================================================================================
 
@@ -134,6 +107,8 @@ void Customer::Configure() {
 
   // Set Request body headers.
   curl_easy_setopt(mCURL, CURLOPT_HTTPHEADER, mHeaders);
+  // Start program
+  Initialise();
 }
 //=========================================================================================
 
@@ -160,8 +135,6 @@ int main() {
   } else {
     std::getline(file, sTemp);
     Customer johnDoe("Authorization: Bearer " + sTemp);
-    johnDoe.Configure();
-    johnDoe.Initialise();
   }
   file.close();
 

@@ -40,7 +40,7 @@ constexpr auto BASEURL = "https://api-sandbox.starlingbank.com/api/v2/";
 constexpr auto TYPE = "Accept: application/json";
 constexpr auto C_TYPE = "Content-Type: application/json";
 constexpr auto OK = 200;
-constexpr auto N_ACCOUNTS = 1;
+constexpr auto N_ACCOUNTS = 2;
 constexpr auto MAX_TR_TIME = "2021-07-19T13%3A15%3A07.000Z";
 constexpr auto MIN_TR_TIME = "2021-07-12T13%3A15%3A07.000Z";
 
@@ -62,5 +62,10 @@ typedef enum {
   Transfer = 3,
   Esc = 4
 } AccInfo;
+
+typedef enum {
+  GET = 0,
+  PUT = 1
+} ReqType;
 
 #endif  // D__DOWNLOAD_PROJECTS_STARLING_CPP_DEFINITIONS_HPP_

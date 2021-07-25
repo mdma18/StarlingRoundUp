@@ -12,7 +12,6 @@ Account::Account(Customer* pCust, std::string sUID, std::string sCat)
       m_fBalance(0),
       m_fSum(0) {
   Controller();
-  // ReqBalance();
 }
 //=========================================================================================
 
@@ -32,7 +31,7 @@ void Account::Controller() {
     // Get URL for HTTP Request.
     sTemp = SetURL(zInfo);
     // Perform Request and Set parameters based on data.
-    SetParams(&zInfo, m_pCustomer->GetRequest(sTemp));
+    SetParams(&zInfo, m_pCustomer->CurlRequest(sTemp, GET));
     // break;
   }
 }
@@ -78,7 +77,7 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
         jTemp["name"] = "MySavings";
         jTemp["target"]["minorUnits"] = 10000;
         // PUT & leave zInfo as it is
-        m_pCustomer->PutRequest(SetURL(*zInfo), jTemp);
+        m_pCustomer->CurlRequest(SetURL(*zInfo), PUT, jTemp);
         // Retry again
         *zInfo = SavingsUUID;
         break;
@@ -95,7 +94,7 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
       iFile.close();
       jTemp["amount"]["minorUnits"] = static_cast<int>(std::roundf(m_fSum * 100.0));
       // std::cout << jData << std::endl;
-      jData = m_pCustomer->PutRequest(SetURL(*zInfo), jTemp);
+      jData = m_pCustomer->CurlRequest(SetURL(*zInfo), PUT, jTemp);
       *zInfo = Esc;
       break;
   }

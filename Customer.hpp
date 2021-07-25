@@ -28,13 +28,16 @@ class Customer {
   virtual ~Customer();
 
   /* Public Methods */
-  void Configure();
-  void Initialise();
+  json CurlRequest(std::string sURL,
+                   ReqType zType,
+                   json jData = NULL);
   json GetRequest(std::string sURL);
   json PutRequest(std::string sURL, json jData);
 
  private:
   /* Private Methods */
+  void Configure();
+  void Initialise();
   static std::size_t WriteCallback(
       const char* in,
       std::size_t size,
@@ -50,7 +53,6 @@ class Customer {
   CURL* mCURL;
   struct curl_slist* mHeaders;
   std::string mData;
-  json jResponse;
   std::string mAuth;
   std::vector<Account*> mAccounts;
 };
