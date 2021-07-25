@@ -25,7 +25,7 @@ void Customer::Initialise() {
   // Initial (seed) URL to fetch accounts.
   std::string sURL(BASEURL + std::string("accounts"));
   // Get Accounts of Customer
-  json jData(GetRequest(sURL));
+  json jData(CurlRequest(sURL, GET));
 
   // Initialise Account objects with their respective UUIDs.
   for (int i(0); i < N_ACCOUNTS; i++) {
@@ -53,7 +53,7 @@ json Customer::CurlRequest(std::string sURL, ReqType zType, json jData) {
       break;
   }
   // For printing RAW response data
-  std::cout << "\n---This is a " << sTemp << " request---\n"
+  std::cout << "\n--- This is a " << sTemp << " request ---\n"
             << std::endl;
   printf("\n\n%s\n\n", mData.c_str());
 

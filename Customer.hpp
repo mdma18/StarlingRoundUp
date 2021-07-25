@@ -31,8 +31,6 @@ class Customer {
   json CurlRequest(std::string sURL,
                    ReqType zType,
                    json jData = NULL);
-  json GetRequest(std::string sURL);
-  json PutRequest(std::string sURL, json jData);
 
  private:
   /* Private Methods */
