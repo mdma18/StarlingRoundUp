@@ -75,7 +75,7 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
         jTemp = json::parse(iFile);
         iFile.close();
         jTemp["name"] = "MySavings";
-        jTemp["target"]["minorUnits"] = 10000;
+        jTemp["target"]["minorUnits"] = 100000;
         // PUT & leave zInfo as it is
         m_pCustomer->CurlRequest(SetURL(*zInfo), PUT, jTemp);
         // Retry again

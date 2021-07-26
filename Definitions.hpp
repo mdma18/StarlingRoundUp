@@ -40,23 +40,13 @@ using nlohmann::json;
 constexpr auto BASEURL = "https://api-sandbox.starlingbank.com/api/v2/";
 constexpr auto TYPE = "Accept: application/json";
 constexpr auto C_TYPE = "Content-Type: application/json";
-constexpr auto CONT = "Expect:";
-constexpr auto ENC = "Transfer-Encoding: chunked";
-constexpr auto OK = 200;
-constexpr auto N_ACCOUNTS = 2;
 constexpr auto MAX_TR_TIME = "2021-07-25T21%3A51%3A00.000Z";
 constexpr auto MIN_TR_TIME = "2021-07-18T13%3A05%3A00.000Z";
 
-// const CURLoption zOpts[] = {
-//     CURLOPT_VERBOSE,
-//     CURLOPT_SSL_VERIFYPEER,
-//     CURLOPT_IPRESOLVE,
-//     CURLOPT_TIMEOUT,
-//     CURLOPT_FOLLOWLOCATION,
-//     CURLOPT_USERAGENT,
-//     CURLOPT_WRITEFUNCTION,
-//     CURLOPT_WRITEDATA,
-//     CURLOPT_HTTPHEADER};
+struct WriteThis {
+  const char* pData;
+  size_t nSize;
+};
 
 typedef enum {
   AccBalance = 0,

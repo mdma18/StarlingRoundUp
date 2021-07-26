@@ -7,6 +7,7 @@ Customer::Customer(std::string sAuth)
     : m_Handle(curl_easy_init()),
       mHeaders(NULL),
       mAuth(sAuth) {
+  // Set all Curl handle parameters
   Configure();
   // Start program
   Initialise();
@@ -18,8 +19,7 @@ Customer::~Customer() {
   // Clear headers
   curl_slist_free_all(mHeaders);
   // Cleanup CURL
-  // curl_easy_cleanup(m_GETHandle);
-  // curl_easy_cleanup(m_PUTHandle);
+  curl_easy_cleanup(m_Handle);
 }
 //=========================================================================================
 
@@ -31,11 +31,8 @@ void Customer::Initialise() {
   json jData(CurlRequest(sURL, GET));
 
   // Initialise Account objects with their respective UUIDs.
-  for (int i(0); i < N_ACCOUNTS; i++) {
-    mAccounts.push_back(new Account(this,
-                                    jData["accounts"][i]["accountUid"],
-                                    jData["accounts"][i]["defaultCategory"]));
-  }
+  m_Account = new Account(this, jData["accounts"][0]["accountUid"],
+                          jData["accounts"][0]["defaultCategory"]);
 }
 //=========================================================================================
 
@@ -44,24 +41,25 @@ json Customer::CurlRequest(std::string sURL, ReqType zType, json jData) {
   int nResCode(0);
   std::string sTemp(zType ? "PUT" : "GET");
 
-  switch (zType) {
-    case PUT:
-      curl_easy_setopt(m_Handle, CURLOPT_CUSTOMREQUEST, "PUT");             /* !!! */
-      curl_easy_setopt(m_Handle, CURLOPT_POSTFIELDS, jData.dump().c_str()); /* data goes here */
-    case GET:
-      curl_easy_setopt(m_Handle, CURLOPT_URL, sURL.c_str());
-      // Run our HTTP GET command, capture the HTTP response code.
-      curl_easy_perform(m_Handle);
-      curl_easy_getinfo(m_Handle, CURLINFO_RESPONSE_CODE, &nResCode);
-      break;
+  curl_easy_setopt(m_Handle, CURLOPT_UPLOAD, zType);
+
+  // If PUT, prepare data
+  if (zType) {
+    m_WriteBuff.pData = jData.dump().c_str();
+    m_WriteBuff.nSize = jData.dump().size();
   }
+
+  curl_easy_setopt(m_Handle, CURLOPT_URL, sURL.c_str());
+  // Run our HTTP GET command, capture the HTTP response code.
+  curl_easy_perform(m_Handle);
+  curl_easy_getinfo(m_Handle, CURLINFO_RESPONSE_CODE, &nResCode);
 
   // For printing RAW response data
   std::cout << "\n--- This is a " << sTemp << " request ---\n"
             << std::endl;
-  printf("\n\n%s\n\n", mData.c_str());
+  printf("%s\n\n", mData.c_str());
 
-  if (nResCode == OK) {
+  if (nResCode == 200) {
     // Parse JSON Object.
     jData = json::parse(mData);
     // Clear buffer
@@ -82,8 +80,6 @@ void Customer::Configure() {
   mHeaders = curl_slist_append(mHeaders, TYPE);
   mHeaders = curl_slist_append(mHeaders, mAuth.c_str());
   mHeaders = curl_slist_append(mHeaders, C_TYPE);
-  // mHeaders = curl_slist_append(mHeaders, CONT);
-  // mHeaders = curl_slist_append(mHeaders, ENC);
 
   // Verbose to debug
   curl_easy_setopt(m_Handle, CURLOPT_VERBOSE, 0L);
@@ -112,6 +108,10 @@ void Customer::Configure() {
   // callback handling function).
   curl_easy_setopt(m_Handle, CURLOPT_WRITEDATA, &mData);
 
+  curl_easy_setopt(m_Handle, CURLOPT_READFUNCTION, Customer::ReadCallback);
+
+  curl_easy_setopt(m_Handle, CURLOPT_READDATA, &m_WriteBuff);
+
   // Set Request body headers.
   curl_easy_setopt(m_Handle, CURLOPT_HTTPHEADER, mHeaders);
 }
@@ -120,19 +120,38 @@ void Customer::Configure() {
 //=========================================================================================
 /* Callback function used by the cURL library to process responses */
 //=========================================================================================
-std::size_t Customer::WriteCallback(
-    const char *in,
-    std::size_t size,
-    std::size_t num,
-    std::string *out) {
+std::size_t Customer::WriteCallback(const char *in, std::size_t size, std::size_t num,
+                                    std::string *out) {
   const std::size_t totalBytes(size * num);
   out->append(in, totalBytes);
   return totalBytes;
 }
 //=========================================================================================
 
+//=========================================================================================
+std::size_t Customer::ReadCallback(char *dest, size_t size, size_t nmemb, void *userp) {
+  WriteThis *wt = (struct WriteThis *)userp;
+  size_t nBuff = size * nmemb;
+
+  if (wt->nSize) {
+    /* copy as much as possible from the source to the destination */
+    size_t nCopy = wt->nSize;
+    if (nCopy > nBuff)
+      nCopy = nBuff;
+    memcpy(dest, wt->pData, nCopy);
+
+    wt->pData += nCopy;
+    wt->nSize -= nCopy;
+    return nCopy; /* we copied this many bytes */
+  }
+  return 0; /* no more data left to deliver */
+}
+//=========================================================================================
+
+//=========================================================================================
 int main() {
   std::string sTemp;
+  // Auth file
   std::ifstream file("Config/Auth.txt");
 
   if (!file) {
