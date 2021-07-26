@@ -77,7 +77,8 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
         jTemp["name"] = "MySavings";
         jTemp["target"]["minorUnits"] = 100000;
         // PUT & leave zInfo as it is
-        m_pCustomer->CurlRequest(SetURL(*zInfo), PUT, jTemp);
+        m_pCustomer->SetBuffer(jTemp);
+        m_pCustomer->CurlRequest(SetURL(*zInfo), PUT);
         // Retry again
         *zInfo = SavingsUUID;
         break;
@@ -94,7 +95,8 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
       iFile.close();
       jTemp["amount"]["minorUnits"] = static_cast<int>(std::roundf(m_fSum * 100.0));
       // std::cout << jData << std::endl;
-      jData = m_pCustomer->CurlRequest(SetURL(*zInfo), PUT, jTemp);
+      m_pCustomer->SetBuffer(jTemp);
+      jData = m_pCustomer->CurlRequest(SetURL(*zInfo), PUT);
       *zInfo = Esc;
       break;
   }
