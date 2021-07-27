@@ -34,7 +34,7 @@
 **.DS_Store
 
 # Visual Studio Code files
-*.vscode
+/.vscode
 
 # Private Keys
 *key.json*
@@ -43,5 +43,5 @@
 *.crt
 
 # Config files
-Config/Auth.txt
 Config/BkpCodes.txt
+Config/Auth.txt
