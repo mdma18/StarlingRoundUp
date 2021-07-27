@@ -3,7 +3,8 @@ This repo contains the source code for the project and some config files require
 
 ## Structure 
 - The Config folder contains the necessary JSON templates and a file required for Authentication.
-- Please copy your "*Starling Access Token*" and paste it in Config/Auth.txt
+- Please create a `.txt` file in the *Config* folder, named `Auth`. Copy your "*Starling Access Token*" 
+- into Config/Auth.txt
 - `Customer.cpp` is the main class containing core functionalities of the project.  
 - `main()` Main method is included within the Customer class. 
 
