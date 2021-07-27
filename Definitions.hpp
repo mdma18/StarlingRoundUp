@@ -24,12 +24,6 @@
 #include <math.h>
 #include <rpc.h>
 
-#include <fstream>
-#include <iostream>
-#include <memory>
-#include <sstream>
-#include <string>
-
 #include "json.hpp"
 using nlohmann::json;
 
@@ -43,11 +37,20 @@ constexpr auto C_TYPE = "Content-Type: application/json";
 constexpr auto MAX_TR_TIME = "2021-07-25T21%3A51%3A00.000Z";
 constexpr auto MIN_TR_TIME = "2021-07-18T13%3A05%3A00.000Z";
 
+/**
+ * @brief Struct object to store data 
+ * and size to forward for PUT requests.
+ */
 struct WriteThis {
   const char* pData;
   size_t nSize;
 };
-
+/**
+ * @brief Enum type to represent different
+ * states of state machine for processing 
+ * all the required requests for collecting 
+ * data.
+ */
 typedef enum {
   AccBalance = 0,
   AccFeed = 1,
@@ -55,7 +58,10 @@ typedef enum {
   Transfer = 3,
   Esc = 4
 } AccInfo;
-
+/**
+ * @brief Enum type to enable 
+ * option between PUT and GET requests.
+ */
 typedef enum {
   GET = 0,
   PUT = 1

@@ -58,12 +58,15 @@ json Customer::CurlRequest(std::string sURL, ReqType zType) {
   //           << std::endl;
   // printf("%s\n\n", m_ReadBuff.c_str());
 
+  // Parse data from buffer into JSON object
+  jData = json::parse(m_ReadBuff);
+
   // If Response OK, Parse data & clear buffer.
   if (nResCode == 200) {
-    jData = json::parse(m_ReadBuff);
     m_ReadBuff.clear();
   } else {
-    ssErr << sTemp << " Request failed with response code: " << nResCode;
+    ssErr << sTemp << " Request failed with response code: " << nResCode << "\n"
+          << jData["error_description"];
     throw ssErr.str();
   }
   return jData;
@@ -129,7 +132,7 @@ std::size_t Customer::ReadCallback(char *dest, size_t size, size_t nmemb, void *
   size_t nBuff = size * nmemb;
 
   if (wt->nSize) {
-    /* copy as much as possible from the source to the destination */
+    // Copy as much as possible from the source to the destination.
     size_t nCopy = wt->nSize;
     if (nCopy > nBuff)
       nCopy = nBuff;
@@ -137,9 +140,11 @@ std::size_t Customer::ReadCallback(char *dest, size_t size, size_t nmemb, void *
 
     wt->pData += nCopy;
     wt->nSize -= nCopy;
-    return nCopy; /* we copied this many bytes */
+    // Copied this many bytes.
+    return nCopy;
   }
-  return 0; /* no more data left to deliver */
+  // No more data left to deliver.
+  return 0;
 }
 //=========================================================================================
 

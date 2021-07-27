@@ -21,17 +21,54 @@ class Customer;
 
 class Account {
  public:
+  /**
+   * @brief Construct a new Account object.
+   * 
+   * @param pCust Pointer to "Parent" Customer class.
+   * @param sUID Store this account's UUID.
+   * @param sCat Store this account's Category n.
+   */
   Account(Customer* pCust, std::string sUID, std::string sCat);
   virtual ~Account();
 
-  /* Public Methods */
-
  private:
   /* Private Methods */
-  void Controller();
+  /**
+   * @brief Controller function which calls up a state machine
+   * to decide which information to obtain and request.
+   * 
+   * @param zInfo Variable to indicate which Request to make.
+   */
+  void Controller(AccInfo zInfo = AccBalance);
+  /**
+   * @brief A function to generate random
+   * UUID values, required to track transactions.
+   * 
+   * @return std::string Returns the UUID as a string.
+   */
   std::string GenerateUUID();
+  /**
+   * @brief This function implements a state machine
+   * with different URLs as options, these are chosen
+   * by the Controller().
+   * 
+   * @param zInfo Enum type specifying which stage of 
+   * the request process to set.
+   * @return std::string Returns the desired URL based on the 
+   * zInfo value.
+   */
   std::string SetURL(AccInfo zInfo);
+  /**
+   * @brief Sets the Parameters required for the Account info
+   * This function implements a State machine to choose the various 
+   * requests to make. Parses all the data and indicates which 
+   * request to make next.
+   * 
+   * @param zInfo Variable indicating the state of the request process.
+   * @param jData JSON object containing the info from the request
+   */
   void SetParams(AccInfo* zInfo, json jData);
+  json Parser(std::string sPath);
 
  private:
   /* Defined to prevent copying */
@@ -39,12 +76,12 @@ class Account {
   Account& operator=(const Account& other);
 
   /* Attributes */
-  std::string m_sAccUUID;
-  std::string m_sCategory;
-  std::string m_sSavingsUUID;
-  float m_fBalance;
-  Customer* m_pCustomer;
-  float m_fSum;
+  std::string m_sAccUUID;      // Stores the Account UUID.
+  std::string m_sCategory;     // Stores the Account category value.
+  std::string m_sSavingsUUID;  // Stores the UUID of a Savings Goal.
+  float m_fBalance;            // Stores the Account balance.
+  Customer* m_pCustomer;       // Pointer to Customer class
+  float m_fSum;                // Stores the total sum calculated from the Round-Up.
 };
 
 #endif  // D__DOWNLOAD_PROJECTS_STARLING_CPP_ACCOUNT_HPP_

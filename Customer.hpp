@@ -20,7 +20,6 @@
 #include <memory>
 #include <sstream>
 #include <string>
-#include <vector>
 
 #include "Account.hpp"
 #include "Definitions.hpp"

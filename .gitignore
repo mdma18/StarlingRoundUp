@@ -40,3 +40,7 @@
 *key.json*
 *.pem
 *.p
+
+# Config files
+Config/Auth.txt
+Config/BkpCodes.txt
