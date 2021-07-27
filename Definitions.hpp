@@ -13,7 +13,7 @@
 #ifndef D__DOWNLOAD_PROJECTS_STARLING_CPP_DEFINITIONS_HPP_
 #define D__DOWNLOAD_PROJECTS_STARLING_CPP_DEFINITIONS_HPP_
 
-#pragma comment(lib, "rpcrt4.lib")
+// #pragma comment(lib, "rpcrt4.lib")
 
 /* Standard Libraries */
 #include <stdio.h>

@@ -5,9 +5,9 @@
 #include "Customer.hpp"
 
 Account::Account(Customer* pCust, std::string sUID, std::string sCat)
-    : m_sAccUUID(sUID),
+    : m_pCustomer(pCust),
+      m_sAccUUID(sUID),
       m_sCategory(sCat),
-      m_pCustomer(pCust),
       m_fBalance(0),
       m_fSum(0) {
   // Start redirecting
@@ -54,7 +54,7 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
         ssErr << "\nNo transactions found. Nothing to send to Savings Goal.\n";
         throw ssErr.str();
       } else {
-        for (int i(0); i < jData["feedItems"].size(); i++) {
+        for (int i(0); i < static_cast<int>(jData["feedItems"].size()); i++) {
           nVal = jData["feedItems"][i]["amount"]["minorUnits"];
           nVal /= 100;
           // Calculate "round-up" value and add to sum.
@@ -108,6 +108,8 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
       jData = m_pCustomer->CurlRequest(SetURL(*zInfo), PUT);
       *zInfo = AccBalance;
       break;
+    case Esc:
+      break;
   }
 }
 //=========================================================================================
@@ -131,6 +133,8 @@ std::string Account::SetURL(AccInfo zInfo) {
     case Transfer:
       sURL = BASEURL + std::string("account/") + m_sAccUUID + "/savings-goals/" +
              m_sSavingsUUID + "/add-money/" + GenerateUUID();
+      break;
+    case Esc:
       break;
   }
   return sURL;

@@ -1,38 +1,23 @@
-.PHONY: install run clean help
+CC = g++
+CFLAGS = -Wall -g
+TARGET = Program
+LDLIBS  = -lcurl -lrpcrt4
 
-# Default command to run install dependencies and run program
-all: install run
+# $(wildcard *.cpp /xxx/xxx/*.cpp): get all .cpp files from the current directory and dir "/xxx/xxx/"
+SRCS := $(wildcard *.cpp)
+# $(patsubst %.cpp,%.o,$(SRCS)): substitute all ".cpp" file name strings to ".o" file name strings
+OBJS := $(patsubst %.cpp,%.o,$(SRCS))
 
-# Installs all packages listed in 'requirements.txt'
-install:
-	@echo ""
-	@echo "Installing all necessary python packages.."
-	@echo ""
-	@python -m pip install -Ur requirements.txt
+all: $(TARGET) | clean run
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDLIBS)
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c $<
 
-# Run the main program
-run:
-	@echo ""
-	@echo "Running main program:"
-	@echo ""
-	@python main.py
-
-# Clean up files
 clean:
-	@echo "Cleaning unnecessary files.."
-	@find . -name '*.pyc' -exec rm --force {} +
-	@find . -name '*.pyo' -exec rm --force {} +
-	@name '*~' -exec rm --force  {}
+	rm -rf $(OBJS)
+	
+run:
+	.\Program.exe
 
-# Help command 
-help:
-	@echo "Please use 'make <target>' where <target> is one of"
-	@echo ""
-	@echo "  all         to run all commands altogether"
-	@echo "  install     install packages and prepare environment"
-	@echo "  run         run main code"
-	@echo "  clean       remove *.pyc files and __pycache__ directory"
-	@echo ""
-	@echo "Check the Makefile to know exactly what each target is doing."
-
-
+.PHONY: all clean run

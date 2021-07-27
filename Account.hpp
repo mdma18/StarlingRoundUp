@@ -84,11 +84,11 @@ class Account {
   Account& operator=(const Account& other);
 
   /* Attributes */
+  Customer* m_pCustomer;       // Pointer to Customer class
   std::string m_sAccUUID;      // Stores the Account UUID.
   std::string m_sCategory;     // Stores the Account category value.
   std::string m_sSavingsUUID;  // Stores the UUID of a Savings Goal.
   float m_fBalance;            // Stores the Account balance.
-  Customer* m_pCustomer;       // Pointer to Customer class
   float m_fSum;                // Stores the total sum calculated from the Round-Up.
 };
 
