@@ -1,2 +1,0 @@
-g++ Customer.cpp Account.cpp -o test -lcurl -lrpcrt4
-.\test
