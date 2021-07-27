@@ -1,4 +1,4 @@
-# SmartPricing Project
+# Starling's Round-Up Application
 This repo contains the source code for the project and some config files required to run the application.
 
 ## Structure 
@@ -15,3 +15,5 @@ This repo contains the source code for the project and some config files require
 - Available commands: help, all, run and clean.
 - To automate everything, simply run: `$make`, this will compile and and run the project.
 - Further info can be found by running: `$make help`
+
+**Project Author**: *Amdadullah Md*
