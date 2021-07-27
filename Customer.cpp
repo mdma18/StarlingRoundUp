@@ -2,7 +2,6 @@
 
 #include "Customer.hpp"
 
-//=========================================================================================
 Customer::Customer(std::string sAuth)
     : m_Handle(curl_easy_init()),
       mHeaders(NULL),
@@ -14,7 +13,6 @@ Customer::Customer(std::string sAuth)
 }
 //=========================================================================================
 
-//=========================================================================================
 Customer::~Customer() {
   // Clear headers
   curl_slist_free_all(mHeaders);
@@ -23,7 +21,6 @@ Customer::~Customer() {
 }
 //=========================================================================================
 
-//=========================================================================================
 void Customer::Initialise() {
   // Initial (seed) URL to fetch accounts.
   std::string sURL(BASEURL + std::string("accounts"));
@@ -37,7 +34,6 @@ void Customer::Initialise() {
 }
 //=========================================================================================
 
-//=========================================================================================
 json Customer::CurlRequest(std::string sURL, ReqType zType) {
   int nResCode(0);
   std::string sTemp(zType ? "PUT" : "GET");
@@ -54,9 +50,9 @@ json Customer::CurlRequest(std::string sURL, ReqType zType) {
   curl_easy_getinfo(m_Handle, CURLINFO_RESPONSE_CODE, &nResCode);
 
   // Uncomment to print RAW Curl response data
-  // std::cout << "\n--- This is a " << sTemp << " request ---\n"
-  //           << std::endl;
-  // printf("%s\n\n", m_ReadBuff.c_str());
+  std::cout << "\n--- This is a " << sTemp << " request ---\n"
+            << std::endl;
+  printf("%s\n\n", m_ReadBuff.c_str());
 
   // Parse data from buffer into JSON object
   jData = json::parse(m_ReadBuff);
@@ -65,15 +61,16 @@ json Customer::CurlRequest(std::string sURL, ReqType zType) {
   if (nResCode == 200) {
     m_ReadBuff.clear();
   } else {
-    ssErr << sTemp << " Request failed with response code: " << nResCode << "\n"
-          << jData["error_description"];
+    ssErr << sTemp << " Request failed with response code: " << nResCode << "\n";
+    if (!jData.empty()) {
+      ssErr << jData["error_description"];
+    }
     throw ssErr.str();
   }
   return jData;
 }
 //=========================================================================================
 
-//=========================================================================================
 void Customer::Configure() {
   // Append Header info for Authentication: Accept and Authorization
   mHeaders = curl_slist_append(mHeaders, TYPE);
@@ -117,7 +114,6 @@ void Customer::Configure() {
 }
 //=========================================================================================
 
-//=========================================================================================
 std::size_t Customer::WriteCallback(const char *in, std::size_t size, std::size_t num,
                                     std::string *psData) {
   const std::size_t totalBytes(size * num);
@@ -126,7 +122,6 @@ std::size_t Customer::WriteCallback(const char *in, std::size_t size, std::size_
 }
 //=========================================================================================
 
-//=========================================================================================
 std::size_t Customer::ReadCallback(char *dest, size_t size, size_t nmemb, void *userp) {
   WriteThis *wt = (struct WriteThis *)userp;
   size_t nBuff = size * nmemb;
@@ -148,7 +143,6 @@ std::size_t Customer::ReadCallback(char *dest, size_t size, size_t nmemb, void *
 }
 //=========================================================================================
 
-//=========================================================================================
 void Customer::SetBuffer(json jData) {
   m_WriteBuff.pData = jData.dump().c_str();
   m_WriteBuff.nSize = jData.dump().size();

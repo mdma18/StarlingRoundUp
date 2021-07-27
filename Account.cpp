@@ -4,7 +4,6 @@
 // Necessary to reference parent class
 #include "Customer.hpp"
 
-//=========================================================================================
 Account::Account(Customer* pCust, std::string sUID, std::string sCat)
     : m_sAccUUID(sUID),
       m_sCategory(sCat),
@@ -12,17 +11,18 @@ Account::Account(Customer* pCust, std::string sUID, std::string sCat)
       m_fBalance(0),
       m_fSum(0) {
   // Start redirecting
+  // std::cout << "Your account UUID is: " << sUID << std::endl;
   Controller();
+  std::cout << "\n\nYour account balance is: " << m_fBalance << std::endl;
+  printf("\nThe total sum calculated from the Round-Up is: %.2f\n", m_fSum);
 }
 //=========================================================================================
 
-//=========================================================================================
 Account::~Account() {
   delete m_pCustomer;
 }
 //=========================================================================================
 
-//=========================================================================================
 void Account::Controller(AccInfo zInfo) {
   std::string sTemp;
 
@@ -36,7 +36,6 @@ void Account::Controller(AccInfo zInfo) {
 }
 //=========================================================================================
 
-//=========================================================================================
 void Account::SetParams(AccInfo* zInfo, json jData) {
   float nVal(0);
   json jTemp;
@@ -47,12 +46,12 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
     case AccBalance:
       m_fBalance = jData["effectiveBalance"]["minorUnits"];
       m_fBalance /= 100;
-      *zInfo = AccFeed;
+      *zInfo = m_fSum ? Esc : AccFeed;
       break;
     /* Check for feed items, initiate round-up if found. */
     case AccFeed:
       if (jData["feedItems"].empty()) {
-        ssErr << "No transactions found. Nothing to send to Savings Goal.";
+        ssErr << "\nNo transactions found. Nothing to send to Savings Goal.\n";
         throw ssErr.str();
       } else {
         for (int i(0); i < jData["feedItems"].size(); i++) {
@@ -60,13 +59,12 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
           nVal /= 100;
           // Calculate "round-up" value and add to sum.
           m_fSum += (std::ceil(nVal) - nVal);
-          // std::cout << fValue << std::endl;
         }
         // Enough funds? If yes, move round-up sum to savings goal, otherwise terminate.
         if (m_fSum > 0 && m_fBalance > m_fSum) {
           *zInfo = SavingsUUID;
         } else {
-          ssErr << "Ending program as not enough funds available or nothing to save up.";
+          ssErr << "\nEnding program as not enough funds available or nothing to save up.";
           throw ssErr;
         }
       }
@@ -77,6 +75,8 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
         jTemp = Parser("Config/createSavings.json");
         jTemp["name"] = "MySavings";
         jTemp["target"]["minorUnits"] = 100000;
+        // std::cout << "\nA Savings Goal has been created with the name \"MySavings\" and "
+        //           << "with a target goal of \"£1,000\"\n";
         // Prepare buffer for PUT request
         m_pCustomer->SetBuffer(jTemp);
         m_pCustomer->CurlRequest(SetURL(*zInfo), PUT);
@@ -86,24 +86,32 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
       } else {
         // Grab UID
         m_sSavingsUUID = jData["savingsGoalList"][0]["savingsGoalUid"];
-        // std::cout << m_sSavingsUUID << std::endl;
-        // std::cout << GenerateUUID() << std::endl;
+        // std::cout << "\nA Savings Goal with the name: "
+        //           << jData["savingsGoalList"][0]["name"]
+        //           << " and a target goal of: "
+        //           << jData["savingsGoalList"][0]["target"]["minorUnits"]
+        //           << " has been found.\n"
+        //           << "Currently, "
+        //           << jData["savingsGoalList"][0]["totalSaved"]["minorUnits"]
+        //           << " have been saved up. (N.B Divide value by 100).\n"
+        //           << "Percentage of fulfilment: "
+        //           << jData["savingsGoalList"][0]["savedPercentage"]
+        //           << std::endl;
         *zInfo = Transfer;
       }
-      break;
     case Transfer:
       jTemp = Parser("Config/addToSavings.json");
       jTemp["amount"]["minorUnits"] = static_cast<int>(std::roundf(m_fSum * 100.0));
-      // std::cout << jData << std::endl;
+      // std::cout << "Money transferred! Run program again to see changes.\n"
+      //           << std::endl;
       m_pCustomer->SetBuffer(jTemp);
       jData = m_pCustomer->CurlRequest(SetURL(*zInfo), PUT);
-      *zInfo = Esc;
+      *zInfo = AccBalance;
       break;
   }
 }
 //=========================================================================================
 
-//=========================================================================================
 std::string Account::SetURL(AccInfo zInfo) {
   std::string sURL;
 
@@ -129,7 +137,6 @@ std::string Account::SetURL(AccInfo zInfo) {
 }
 //=========================================================================================
 
-//=========================================================================================
 json Account::Parser(std::string sPath) {
   std::ifstream iFile;
   json jTemp;
@@ -142,7 +149,6 @@ json Account::Parser(std::string sPath) {
 }
 //=========================================================================================
 
-//=========================================================================================
 std::string Account::GenerateUUID() {
   std::string sUUID;
   char* czStr;

@@ -34,8 +34,8 @@ using nlohmann::json;
 constexpr auto BASEURL = "https://api-sandbox.starlingbank.com/api/v2/";
 constexpr auto TYPE = "Accept: application/json";
 constexpr auto C_TYPE = "Content-Type: application/json";
-constexpr auto MAX_TR_TIME = "2021-07-25T21%3A51%3A00.000Z";
-constexpr auto MIN_TR_TIME = "2021-07-18T13%3A05%3A00.000Z";
+constexpr auto MAX_TR_TIME = "2021-07-27T03%3A02%3A00.000Z";
+constexpr auto MIN_TR_TIME = "2021-07-20T03%3A02%3A00.000Z";
 
 /**
  * @brief Struct object to store data 

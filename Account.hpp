@@ -31,6 +31,15 @@ class Account {
   Account(Customer* pCust, std::string sUID, std::string sCat);
   virtual ~Account();
 
+  /* Public Methods */
+  /**
+   * @brief Parses a .json file into a json object.
+   * 
+   * @param sPath File path to json file.
+   * @return json Returns the json object with the data.
+   */
+  json Parser(std::string sPath);
+
  private:
   /* Private Methods */
   /**
@@ -68,7 +77,6 @@ class Account {
    * @param jData JSON object containing the info from the request
    */
   void SetParams(AccInfo* zInfo, json jData);
-  json Parser(std::string sPath);
 
  private:
   /* Defined to prevent copying */
