@@ -154,9 +154,9 @@ json Account::Parser(std::string sPath) {
 //=========================================================================================
 
 std::string Account::GetDate(std::string sTemp) {
-  std::cout << "Please provide the"
+  std::cout << "Please provide the "
             << sTemp
-            << "transaction timestamp in the format (YYYY-MM-DD)"
+            << " transaction timestamp in the format (YYYY-MM-DD)"
             << std::endl;
   std::cin >> sTemp;
   return sTemp;
