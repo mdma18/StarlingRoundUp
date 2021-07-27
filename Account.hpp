@@ -77,6 +77,13 @@ class Account {
    * @param jData JSON object containing the info from the request
    */
   void SetParams(AccInfo* zInfo, json jData);
+  /**
+   * @brief Get the the date via user input
+   * 
+   * @param sTemp MAX or MIN timestamp?
+   * @return std::string return date as a string
+   */
+  std::string GetDate(std::string sTemp);
 
  private:
   /* Defined to prevent copying */

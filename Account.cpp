@@ -124,8 +124,8 @@ std::string Account::SetURL(AccInfo zInfo) {
     case AccFeed:
       sURL = BASEURL + std::string("feed/account/") + m_sAccUUID + "/category/" +
              m_sCategory + "/transactions-between?" + "minTransactionTimestamp=" +
-             MIN_TR_TIME + "&" + "maxTransactionTimestamp=" +
-             MAX_TR_TIME;
+             GetDate("MIN") + "T17%3A00%3A00.000Z" + "&" + "maxTransactionTimestamp=" +
+             GetDate("MAX") + "T17%3A00%3A00.000Z";
       break;
     case SavingsUUID:
       sURL = BASEURL + std::string("account/") + m_sAccUUID + "/savings-goals";
@@ -150,6 +150,16 @@ json Account::Parser(std::string sPath) {
   iFile.close();
 
   return jTemp;
+}
+//=========================================================================================
+
+std::string Account::GetDate(std::string sTemp) {
+  std::cout << "Please provide the"
+            << sTemp
+            << "transaction timestamp in the format (YYYY-MM-DD)"
+            << std::endl;
+  std::cin >> sTemp;
+  return sTemp;
 }
 //=========================================================================================
 

@@ -151,7 +151,7 @@ void Customer::SetBuffer(json jData) {
 
 //=========================================================================================
 int main() {
-  std::string sTemp;
+  std::string sTemp, sMaxTime, sMinTime;
   // Auth file
   std::ifstream file("Config/Auth.txt");
 

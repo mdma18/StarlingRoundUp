@@ -20,7 +20,8 @@ transfer it to the first account found.
 - Please create a `.txt` file in the *Config* folder, named `Auth`. Copy your "*Starling Access Token*" 
 - into Config/Auth.txt
 - `Customer.cpp` is the main class containing the core functionalities of the project.  
-- `main()` Main method is included within the Customer class. 
+- `main()` Main method calls up the Round-Up automatically after requesting the user for a timestamp for 
+- the transaction feed items. 
 
 ## Setup
 - Clone the repo in your local machine using: `$git clone https://github.com/MDMA99/SmartPricing.git`
