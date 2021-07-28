@@ -76,7 +76,7 @@ class Account {
    * @param zInfo Variable indicating the state of the request process.
    * @param jData JSON object containing the info from the request
    */
-  void SetParams(AccInfo* zInfo, json jData);
+  void SetParams(AccInfo* zInfo, json jData = NULL);
   /**
    * @brief Get the the date via user input
    * 

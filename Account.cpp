@@ -30,8 +30,12 @@ void Account::Controller(AccInfo zInfo) {
   while (zInfo != Esc) {
     // Get the correct URL for the HTTP Request specified by zInfo.
     sTemp = SetURL(zInfo);
-    // Perform Request and Set parameters based on the obtained data.
-    SetParams(&zInfo, m_pCustomer->CurlRequest(sTemp, GET));
+    if (zInfo == Transfer)
+      // For transfer don't use GET
+      SetParams(&zInfo);
+    else
+      // Perform Request and Set parameters based on the obtained data.
+      SetParams(&zInfo, m_pCustomer->CurlRequest(sTemp, GET));
   }
 }
 //=========================================================================================
@@ -99,6 +103,7 @@ void Account::SetParams(AccInfo* zInfo, json jData) {
         //           << std::endl;
         *zInfo = Transfer;
       }
+      break;
     case Transfer:
       jTemp = Parser("Config/addToSavings.json");
       jTemp["amount"]["minorUnits"] = static_cast<int>(std::roundf(m_fSum * 100.0));

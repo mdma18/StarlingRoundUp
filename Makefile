@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -Wextra -Werror
 TARGET = Program
 LDLIBS  = -lcurl -lrpcrt4
 
